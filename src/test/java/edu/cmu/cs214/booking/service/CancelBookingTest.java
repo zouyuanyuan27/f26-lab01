@@ -60,4 +60,32 @@ class CancelBookingTest {
         assertEquals(1, store.waitlistForRoom(roomA).size(),
                 "no waiter may be promoted by an unknown id");
     }
+
+    /**
+     * S3 promotion: after the cancellation, the waitlisted user holds a
+     * confirmed booking and their waitlist entry is gone. This test fails
+     * on a "delete-only" implementation of cancelBooking.
+     */
+    @Test
+    void cancellingPromotesTheWaitlistedUser() {
+        svc = newService();
+        BookingResult r = svc.book(roomA, alice, new TimeInterval(600, 660));
+        Booking a = assertInstanceOf(BookingResult.Confirmed.class, r).booking();
+        assertInstanceOf(BookingResult.Waitlisted.class,
+                svc.book(roomA, bob, new TimeInterval(630, 700)));
+
+        svc.cancelBooking(a.id());
+
+        // roomA now holds exactly one booking: bob's, over [630,700)
+        var bookings = svc.listBookings(roomA);
+        assertEquals(1, bookings.size(),
+                "the waitlisted user should now hold exactly one confirmed booking");
+        Booking promoted = bookings.get(0);
+        assertEquals(bob, promoted.user());
+        assertEquals(new TimeInterval(630, 700), promoted.interval());
+
+        // bob is no longer on roomA's waitlist
+        assertEquals(0, store.waitlistForRoom(roomA).size(),
+                "the promoted waiter's entry must be removed");
+    }
 }
