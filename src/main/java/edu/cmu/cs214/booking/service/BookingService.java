@@ -46,4 +46,15 @@ public class BookingService {
     public List<Booking> listBookings(Room room) {
         return store.bookingsForRoom(room);
     }
+
+    /**
+     * Cancels the confirmed booking with the given id, freeing its slot.
+     * If no booking has that id, does nothing: no exception, no promotion.
+     */
+    public void cancelBooking(String bookingId) {
+        if (store.findBooking(bookingId).isEmpty()) {
+            return; // unknown id → no-op
+        }
+        store.removeBooking(bookingId);
+    }
 }
