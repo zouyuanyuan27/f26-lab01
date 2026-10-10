@@ -8,6 +8,7 @@ taken they land on a waitlist. It is the codebase you work in for Lab 1.
 所用工具与模型：
 - 人员 A：kimi-k2.7-code
 - 人员 B（里程碑 2 第一部分）：WorkBuddy 智能体（GLM 模型）
+- 人员 C（里程碑 2 第二部分 + 里程碑 3 分析）：WorkBuddy 智能体（GLM 模型）
 
 **Read `ARCHITECTURE.md` first.** It maps the three layers (domain / service / repo)
 so you do not have to cold-read every file.
